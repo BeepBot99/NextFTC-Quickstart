@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple
 import com.rowanmcalpin.nextftc.core.Subsystem
 import com.rowanmcalpin.nextftc.core.command.Command
 import com.rowanmcalpin.nextftc.core.control.controllers.PIDFController
+import com.rowanmcalpin.nextftc.core.control.controllers.feedforward.StaticFeedforward
 import com.rowanmcalpin.nextftc.ftc.OpModeData
 import com.rowanmcalpin.nextftc.ftc.hardware.MotorToPosition
 
@@ -27,7 +28,7 @@ object HorizontalSlide: Subsystem() {
     @JvmField
     var kF: Double = 0.13
 
-    val controller = PIDFController(kP, kI, kD, kF)
+    val controller = PIDFController(kP, kI, kD, StaticFeedforward(kF))
 
     @JvmField
     var attempted = false

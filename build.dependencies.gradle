@@ -1,5 +1,6 @@
 repositories {
     mavenCentral()
+    mavenLocal()
     google() // Needed for androidx
     maven { url = "https://maven.rowanmcalpin.com/" }
     maven { url = "https://maven.pedropathing.com/" } // Remove if you don't intend to use PedroPathing
@@ -17,9 +18,9 @@ dependencies {
     implementation 'org.firstinspires.ftc:Vision:10.1.1'
     implementation 'androidx.appcompat:appcompat:1.2.0'
 
-    implementation 'com.rowanmcalpin.nextftc:core:0.5.4-beta1'
-    implementation 'com.rowanmcalpin.nextftc:ftc:0.5.4-beta1'
-    implementation 'com.rowanmcalpin.nextftc:pedro:0.5.4-beta1' // Remove if you don't intend to use PedroPathing
+    implementation 'com.rowanmcalpin.nextftc:core:0.5.5-beta3.local'
+    implementation 'com.rowanmcalpin.nextftc:ftc:0.5.5-beta3.local'
+    implementation 'com.rowanmcalpin.nextftc:pedro:0.5.5-beta3.local' // Remove if you don't intend to use PedroPathing
     implementation 'com.pedropathing:pedro:1.0.3' // Remove if you don't intend to use PedroPathing
     implementation 'com.acmerobotics.dashboard:dashboard:0.4.16' // Remove if you don't intend to use the FTC Dashboard (required if using PedroPathing)
 
