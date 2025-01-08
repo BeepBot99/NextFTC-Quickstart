@@ -4,17 +4,17 @@ class StatefulSupplier<S, T>(
     private val stateToSupplierMap: Map<S, () -> T>,
     initialState: S
 ) {
-    private var currentState: S = initialState
+    var state: S = initialState
+        get() = field
+        set(value) {
+            if (!stateToSupplierMap.containsKey(value)) {
+                throw IllegalArgumentException("No supplier for state: $value")
+            }
+            field = value
+        }
 
     fun get(): T {
-        val supplier = stateToSupplierMap[currentState] ?: throw IllegalArgumentException("No supplier for state: $currentState")
+        val supplier = stateToSupplierMap[state] ?: throw IllegalArgumentException("No supplier for state: $state")
         return supplier()
     }
-
-    fun setState(state: S) {
-        if (!stateToSupplierMap.containsKey(state)) throw IllegalArgumentException("No supplier for state: $state")
-        currentState = state
-    }
-
-    fun getState(): S = currentState
 }
