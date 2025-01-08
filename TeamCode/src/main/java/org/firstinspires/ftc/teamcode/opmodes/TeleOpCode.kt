@@ -1,5 +1,9 @@
 package org.firstinspires.ftc.teamcode.opmodes
 
+import com.ThermalEquilibrium.homeostasis.Controllers.Feedback.AngleController
+import com.ThermalEquilibrium.homeostasis.Controllers.Feedback.BasicPID
+import com.ThermalEquilibrium.homeostasis.Controllers.Feedback.FeedbackController
+import com.ThermalEquilibrium.homeostasis.Parameters.PIDCoefficients
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
 import com.qualcomm.robotcore.hardware.DcMotor
@@ -15,6 +19,7 @@ import com.rowanmcalpin.nextftc.ftc.hardware.controllables.MotorEx
 import com.rowanmcalpin.nextftc.pedro.PedroOpMode
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit
 import org.firstinspires.ftc.teamcode.MecanumDriverControlledFixed
+import org.firstinspires.ftc.teamcode.OpModeConstants
 import org.firstinspires.ftc.teamcode.StatefulSupplier
 import org.firstinspires.ftc.teamcode.subsystems.ClawPivot
 import org.firstinspires.ftc.teamcode.subsystems.HorizontalSlide
@@ -42,10 +47,19 @@ class TeleOpCode: PedroOpMode(Lift, HorizontalSlide, ClawPivot) {
 
     lateinit var headingSupplier: StatefulSupplier<HeadingState, Float>
 
-    val headingPID: Controller = AngularController(PIDFController(1.0))
+    val headingPID: FeedbackController = AngleController(
+        BasicPID(
+            PIDCoefficients(
+                OpModeConstants.headingP,
+                OpModeConstants.headingI,
+                OpModeConstants.headingD
+            )
+        )
+    )
+
+    var PIDTarget = 0.0
 
     override fun onInit() {
-        headingPID.target = Math.PI
 
         leftFront = MotorEx("frontLeftMotor")
         leftRear = MotorEx("backLeftMotor")
@@ -72,6 +86,7 @@ class TeleOpCode: PedroOpMode(Lift, HorizontalSlide, ClawPivot) {
                 HeadingState.GAMEPAD to { gamepadManager.gamepad1.rightStick.x },
                 HeadingState.PID to {
                     headingPID.calculate(
+                        PIDTarget,
                         imu.robotYawPitchRollAngles.getYaw(AngleUnit.RADIANS)
                     ).toFloat()
                 }),
@@ -92,13 +107,13 @@ class TeleOpCode: PedroOpMode(Lift, HorizontalSlide, ClawPivot) {
         // Gamepad 1
         gamepadManager.gamepad1.b.pressedCommand = {
             ParallelGroup(
-                InstantCommand({ headingPID.target = Math.PI }),
+                InstantCommand({ PIDTarget = Math.PI }),
                 InstantCommand({ headingSupplier.state = HeadingState.PID })
             )
         }
         gamepadManager.gamepad1.x.pressedCommand = {
             ParallelGroup(
-                InstantCommand({ headingPID.target = 0.0 }),
+                InstantCommand({ PIDTarget = 0.0 }),
                 InstantCommand({ headingSupplier.state = HeadingState.PID })
             )
         }
@@ -127,7 +142,7 @@ class TeleOpCode: PedroOpMode(Lift, HorizontalSlide, ClawPivot) {
         telemetry.addData("Slide target position", HorizontalSlide.controller.target)
         telemetry.addData("Slide current position", HorizontalSlide.slideMotor.currentPosition)
         telemetry.addData("Heading power", headingSupplier.get())
-        telemetry.addData("Heading target", headingPID.target)
+        telemetry.addData("Heading target", PIDTarget)
         telemetry.addData("Heading state", headingSupplier.state)
         telemetry.update()
     }
