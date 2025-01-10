@@ -43,7 +43,7 @@ object Lift: Subsystem() {
     var clipPos = 1012.0
 
     @JvmField
-    var highBarPos = 1376.0
+    var highBarPos = 1380.0
 
     @JvmField
     var liftMotorName = "lift"
